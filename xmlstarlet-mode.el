@@ -66,7 +66,7 @@
   (interactive "p")
   (let ((obuf (generate-new-buffer xml-format-buffer))
 	(ps))
-    (message "Starting %s" (string-join (xmlstarlet-format-cmd) " "))
+    ;(message "Starting %s" (string-join (xmlstarlet-format-cmd) " "))
     (setq ps (make-process
 	      :name xml-format-process
 	      :buffer obuf
@@ -101,7 +101,7 @@
   (interactive "sXPath: ")
   (let ((obuf (generate-new-buffer xpath-process-buffer))
 	(ps))
-    (message "Starting %s" (string-join (xpath-xmlstarlet-cmd xpath current-prefix-arg) " "))
+    ;(message "Starting %s" (string-join (xpath-xmlstarlet-cmd xpath current-prefix-arg) " "))
     (setq ps (make-process
 	      :name xpath-process-name
 	      :buffer obuf
