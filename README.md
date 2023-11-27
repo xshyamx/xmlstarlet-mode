@@ -13,9 +13,9 @@ Adds the following keybindings
 
 ## Installation ##
 
-1. Install [XMLStarlet](https://xmlstar.sourceforge.net/download.php) and make it available from on the ~PATH~
-2. Clone the repo to ~site-lisp~ directory
-3. Add to ~load-path~
+1. Install [XMLStarlet](https://xmlstar.sourceforge.net/download.php) and make it available from on the `PATH`
+2. Clone the repo to `site-lisp` directory
+3. Add to `load-path`
 
     ```emacs-lisp
     (add-to-list
