@@ -15,6 +15,11 @@
   :type 'boolean
   :group 'xmlstarlet)
 
+(defcustom xmlstarlet-debug nil
+  "Display debug messages"
+  :type 'boolean
+  :group 'xmlstarlet)
+
 (defconst xmlstarlet-xml-format-process "xml-format"
   "Process name for formatting xml")
 
@@ -32,15 +37,15 @@
 
 (defun xmlstarlet-format-cmd ()
   (list
-   (executable-find xpath-command)
+   (executable-find xmlstarlet-command)
    "fo"))
 
 (defun xmlstarlet-xpath-cmd (xpath &optional is-value)
   (list
-   (executable-find xpath-command)
+   (executable-find xmlstarlet-command)
    "sel"
    (if is-value "" "-R") ; add root element
-   (if (and (not is-value) xpath-format-xml) "-I" "")
+   (if (and (not is-value) xmlstarlet-xpath-format-xml) "-I" "")
    "-t"
    (if is-value "-v" "-c")
    xpath))
@@ -64,17 +69,18 @@
 (defun xmlstarlet-xml-format-buffer (prefix)
   "Formats current buffer contents with XMLStarlet command"
   (interactive "p")
-  (let ((obuf (generate-new-buffer xml-format-buffer))
+  (let ((obuf (generate-new-buffer xmlstarlet-xpath-buffer-name))
 	(ps))
-    ;(message "Starting %s" (string-join (xmlstarlet-format-cmd) " "))
+    (when xmlstarlet-debug
+      (message "Starting %s" (string-join (xmlstarlet-format-cmd) " ")))
     (setq ps (make-process
-	      :name xml-format-process
+	      :name xmlstarlet-xml-format-process
 	      :buffer obuf
 	      :command (xmlstarlet-format-cmd)
 	      :connection-type 'pipe))
     (process-send-region ps (point-min) (point-max))
     (process-put ps :target-buffer (if (eql 4 prefix) (current-buffer)
-				     (get-buffer-create xml-format-buffer)))
+				     (get-buffer-create xmlstarlet-xml-format-buffer)))
     (process-send-eof ps)
     (set-process-sentinel ps #'xmlstarlet--xml-format-buffer-sentinel)))
 
@@ -99,29 +105,36 @@
 (defun xmlstarlet-xpath-query-buffer (xpath)
   "Runs XPath query on the current buffer"
   (interactive "sXPath: ")
-  (let ((obuf (generate-new-buffer xpath-process-buffer))
+  (let ((obuf (generate-new-buffer xmlstarlet-xpath-process-buffer))
 	(ps))
-    ;(message "Starting %s" (string-join (xpath-xmlstarlet-cmd xpath current-prefix-arg) " "))
+    (when xmlstarlet-debug
+      (message "Starting %s" (string-join (xmlstarlet-xpath-cmd xpath current-prefix-arg) " ")))
     (setq ps (make-process
-	      :name xpath-process-name
+	      :name xmlstarlet-xpath-process-name
 	      :buffer obuf
-	      :command (xpath-xmlstarlet-cmd xpath current-prefix-arg)
+	      :command (xmlstarlet-xpath-cmd xpath current-prefix-arg)
 	      :connection-type 'pipe))
     (process-send-region ps (point-min) (point-max))
-    (process-put ps :target-buffer (get-buffer-create xpath-buffer-name))
+    (process-put ps :target-buffer (get-buffer-create xmlstarlet-xpath-buffer-name))
     (process-put ps :is-value current-prefix-arg)
     (process-send-eof ps)
     (set-process-sentinel ps #'xmlstarlet--xpath-query-sentinel)))
 
+(defvar xmlstarlet-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-c") #'xmlstarlet-xpath-query-buffer)
+    (define-key map (kbd "C-c f") #'xmlstarlet-xml-format-buffer)
+    map)
+  "Keymap for xmlstarlet minor mode")
+
 (define-minor-mode xmlstarlet-mode
   "Provide XML formatting & XPath querying using the XMLStarlet
 command line utility"
-  :lighter " XS"
-  (define-key nxml-mode-map (kbd "C-c C-c") #'xmlstarlet-xpath-query-buffer)
-  (define-key nxml-mode-map (kbd "C-c f") #'xmlstarlet-xml-format-buffer))
+  :lighter " XS")
 
 ;;;###autoload
-(add-hook nxml-mode-hook #'xmlstarlet-mode)
+(with-eval-after-load 'nxml-mode
+  (add-hook 'nxml-mode-hook #'xmlstarlet-mode))
 
 (provide 'xmlstarlet-mode)
 ;;; xmlstarlet-mode.el -- Ends here
