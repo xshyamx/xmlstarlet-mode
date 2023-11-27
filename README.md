@@ -6,13 +6,10 @@ utility.
 
 Adds the following keybindings
 
-| Keybinding         | Feature     |
-|--------------------|-------------|
-| <kbd>C-c C-c</kbd> | XPath query |
-| <kbd>C-c f</kbd>   | Format XML  |
-
-**NOTE**: Use <kbd>C-u C-c f</kbd> to replace current buffer contents
-with formatted XML
+| Keybinding         | Feature     | With <kbd>C-u</kbd> prefix argument               |
+|--------------------|-------------|---------------------------------------------------|
+| <kbd>C-c C-c</kbd> | XPath query | Displays results in text mode instead of nxml mod |
+| <kbd>C-c f</kbd>   | Format XML  | Replaces current buffer contents                  |
 
 ## Installation ##
 
