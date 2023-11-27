@@ -8,8 +8,8 @@ Adds the following keybindings
 
 | Keybinding         | Feature     | With <kbd>C-u</kbd> prefix argument               |
 |--------------------|-------------|---------------------------------------------------|
-| <kbd>C-c C-c</kbd> | XPath query | Displays results in text mode instead of nxml mod |
-| <kbd>C-c f</kbd>   | Format XML  | Replaces current buffer contents                  |
+| <kbd>C-c C-c</kbd> | Runs XPath query and displays results in the `*XPath-Result*` buffer | Displays results in text mode instead of nxml mod |
+| <kbd>C-c f</kbd>   | Formats XML and displays in the `*xml-format*` buffer  | Replaces current buffer contents                  |
 
 ## Installation ##
 
