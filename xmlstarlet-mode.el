@@ -120,10 +120,21 @@
     (process-send-eof ps)
     (set-process-sentinel ps #'xmlstarlet--xpath-query-sentinel)))
 
+(defun xmlstarlet-kill-results-buffer ()
+  "Kill current buffer if it is a results buffer"
+  (interactive)
+  (when (member (buffer-name (current-buffer))
+		(list xmlstarlet-xml-format-buffer xmlstarlet-xpath-buffer-name))
+    (if (> (length (window-list)) 1)
+	(kill-buffer-and-window)
+      (kill-buffer))))
+
 (defvar xmlstarlet-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-c") #'xmlstarlet-xpath-query-buffer)
+    ;; C-c C-f already mapped
     (define-key map (kbd "C-c f") #'xmlstarlet-xml-format-buffer)
+    (define-key map (kbd "C-c C-q") #'xmlstarlet-kill-results-buffer)
     map)
   "Keymap for xmlstarlet minor mode")
 
