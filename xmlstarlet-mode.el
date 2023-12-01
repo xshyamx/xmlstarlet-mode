@@ -129,6 +129,17 @@
 	(kill-buffer-and-window)
       (kill-buffer))))
 
+(defun xmlstarlet-validate-command ()
+  (when (buffer-file-name)
+    (string-join
+     (list
+      (executable-find xmlstarlet-command)
+      "val"
+      "-e"
+      (file-name-nondirectory (buffer-file-name))
+      )
+     " ")))
+
 (defvar xmlstarlet-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-c") #'xmlstarlet-xpath-query-buffer)
@@ -141,7 +152,9 @@
 (define-minor-mode xmlstarlet-mode
   "Provide XML formatting & XPath querying using the XMLStarlet
 command line utility"
-  :lighter " XS")
+  :lighter " XS"
+  (setq-local compile-command
+	      (xmlstarlet-validate-command)))
 
 ;;;###autoload
 (with-eval-after-load 'nxml-mode
